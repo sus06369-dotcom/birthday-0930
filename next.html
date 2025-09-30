@@ -81,10 +81,7 @@ body {
   justify-content:center;
   align-items:center;
   z-index:30;
-  background: rgba(0,0,0,0.3);
-  transition: opacity 1s ease;
 }
-#dogGifContainer.fade-out { opacity:0; }
 #dogGifContainer img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
 #dogText {
   position:absolute;
@@ -92,7 +89,7 @@ body {
   left:50%;
   transform:translate(-50%,-50%);
   font-weight:700;
-  font-size: clamp(32px, 6vw, 72px);
+  font-size: clamp(48px, 10vw, 120px); /* 文字變大 */
   color: var(--fg);
   display:flex;
   flex-direction:column;
@@ -137,9 +134,8 @@ body {
 </div>
 
 <script>
-const COUNT_MESSAGES = [
-  "嘿～海綿寶寶","今天是屬於","🫵🏻🫵🏻🫵🏻你🫵🏻🫵🏻🫵🏻","特別日子！！！","準備好了嗎？🧐","就算還沒👀","也給我準備好😎","時間不等人的🥳","3","2","1"
-];
+
+const COUNT_MESSAGES = ["嘿～海綿寶寶","今天是屬於","🫵🏻🫵🏻🫵🏻你🫵🏻🫵🏻🫵🏻","特別日子！！！","準備好了嗎？🧐","就算還沒👀","也給我準備好😎","時間不等人的🥳","3","2","1"];
 const VIDEO_SRC="Cake1.webm";
 const GIF_SRC="Cake2.gif";
 
@@ -262,36 +258,29 @@ likeBtn.onclick = () => {
 
   startFireworks();
 
+  // 2 秒後顯示 GIF
   setTimeout(() => {
     const dogContainer = document.getElementById("dogGifContainer");
     const dogTextDiv = document.getElementById("dogText");
     dogContainer.style.display = "flex";
 
-    const message = "生日快樂哦";
-    dogTextDiv.innerHTML = "";
-    let idx = 0;
-
-    function showNextChar() {
-      if(idx >= message.length) return;
-      const span = document.createElement("span");
-      span.textContent = message[idx];
-      dogTextDiv.appendChild(span);
-      idx++;
-      setTimeout(showNextChar, 300);
-    }
-    showNextChar();
-
-    // 2 秒後淡出 GIF
+    // 2 秒後顯示文字
     setTimeout(() => {
-      dogContainer.classList.add("fade-out");
-      setTimeout(() => {
-        const spans = dogTextDiv.querySelectorAll("span");
-        spans.forEach((span, i) => {
-          setTimeout(()=>{ span.style.opacity = 0; }, i*300);
-        });
-      }, 1000); // GIF fade-out 時間 1s
+      const message = "生日快樂哦";
+      dogTextDiv.innerHTML = "";
+      let idx = 0;
+
+      function showNextChar() {
+        if(idx >= message.length) return;
+        const span = document.createElement("span");
+        span.textContent = message[idx];
+        dogTextDiv.appendChild(span);
+        idx++;
+        setTimeout(showNextChar, 300);
+      }
+      showNextChar();
     }, 2000);
-  }, 1000);
+  }, 2000);
 };
 
 function startFireworks() {
