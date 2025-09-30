@@ -38,10 +38,18 @@ body {
 .cake-media { width:min(560px,80%); display:none; opacity:0; transition:opacity .6s ease; }
 .cake-media.show { display:block; opacity:1; }
 
-/* 祝賀文字改為圖片 */
+/* 祝賀圖片 */
 #afterCake { display:none; text-align:center; margin-top:16px; z-index:2; }
-.celebrate { font-weight:700; color:var(--fg); font-size: clamp(32px, 6vw, 56px); white-space:nowrap; opacity:0; transform:scale(.6); transition: all .6s ease; }
-.celebrate.show { opacity:1; transform:scale(1); }
+.celebrate {
+  font-weight:700;
+  opacity:0;
+  transform:scale(.6);
+  transition: all .6s ease;
+  max-width:90vw;
+  max-height:70vh;
+  width:auto;
+  height:auto;
+}
 
 /* 按鈕 */
 #buttons { margin-top:30px; display:flex; gap:24px; justify-content:center; opacity:0; }
@@ -83,6 +91,34 @@ body {
   z-index: 20;
   pointer-events:none;
 }
+
+/* dog gif + 豎排文字 */
+#dogGifContainer {
+  display:none;
+  position:fixed;
+  inset:0;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:30;
+  background: rgba(0,0,0,0.3);
+}
+#dogGifContainer img {
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+}
+#dogText {
+  margin-top:20px;
+  font-weight:700;
+  font-size: clamp(32px, 6vw, 72px);
+  color:white;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
 </style>
 </head>
 <body>
@@ -115,9 +151,14 @@ body {
 <!-- 煙火 canvas -->
 <canvas id="fireworksCanvas"></canvas>
 
+<!-- dog gif + 豎排文字 -->
+<div id="dogGifContainer">
+  <img id="dogGif" src="happy dog.gif" alt="Happy Dog" />
+  <div id="dogText"></div>
+</div>
+
 <script>
 
-// === 舊程式碼 ===
 const COUNT_MESSAGES = [
   "嘿～海綿寶寶",
   "今天是屬於",
@@ -270,6 +311,28 @@ likeBtn.onclick = () => {
 
   // 啟動煙火
   startFireworks();
+
+  // 煙火後顯示 GIF 和逐字文字
+  setTimeout(() => {
+    const dogContainer = document.getElementById("dogGifContainer");
+    const dogTextDiv = document.getElementById("dogText");
+    dogContainer.style.display = "flex";
+
+    const message = "生日快樂哦";
+    dogTextDiv.innerHTML = ""; // 清空
+    let idx = 0;
+
+    function showNextChar() {
+      if(idx >= message.length) return;
+      const span = document.createElement("span");
+      span.textContent = message[idx];
+      dogTextDiv.appendChild(span);
+      idx++;
+      setTimeout(showNextChar, 300); // 每個字出現間隔 0.3 秒
+    }
+
+    showNextChar();
+  }, 1000); // 煙火出現 1 秒後
 };
 
 // 煙火效果
