@@ -38,7 +38,7 @@ body {
 .cake-media { width:min(560px,80%); display:none; opacity:0; transition:opacity .6s ease; }
 .cake-media.show { display:block; opacity:1; }
 
-/* 祝賀文字 */
+/* 祝賀文字改為圖片 */
 #afterCake { display:none; text-align:center; margin-top:16px; z-index:2; }
 .celebrate { font-weight:700; color:var(--fg); font-size: clamp(32px, 6vw, 56px); white-space:nowrap; opacity:0; transform:scale(.6); transition: all .6s ease; }
 .celebrate.show { opacity:1; transform:scale(1); }
@@ -92,7 +92,8 @@ body {
     <img id="cakeGif" class="cake-media" alt="cake gif" />
   </div>
   <div id="afterCake">
-    <div id="celebrateText" class="celebrate"> Happy Birthday </div>
+    <!-- 改為圖片 -->
+    <img id="celebrateImg" class="celebrate" src="happy birthday.png" alt="Happy Birthday" style="display:none;" />
     <div id="buttons">
       <button id="likeBtn" class="btn like">我很喜歡</button>
       <button id="dislikeBtn" class="btn dislike">我不喜歡</button>
@@ -115,6 +116,7 @@ body {
 <canvas id="fireworksCanvas"></canvas>
 
 <script>
+
 // === 舊程式碼 ===
 const COUNT_MESSAGES = [
   "嘿～海綿寶寶",
@@ -133,7 +135,7 @@ const GIF_SRC="Cake2.gif";
 const cakeVideo=document.getElementById("cakeVideo");
 const cakeGif=document.getElementById("cakeGif");
 const afterCake=document.getElementById("afterCake");
-const celebrateText=document.getElementById("celebrateText");
+const celebrateImg=document.getElementById("celebrateImg");
 const buttons=document.getElementById("buttons");
 const likeBtn=document.getElementById("likeBtn");
 const dislikeBtn=document.getElementById("dislikeBtn");
@@ -187,9 +189,15 @@ function showCake(){
     },400);
   };
 }
+
+// 顯示圖片代替文字
 function showCelebrate(){
   afterCake.style.display="block";
-  setTimeout(()=>celebrateText.classList.add("show"),200);
+  setTimeout(()=>{
+    celebrateImg.style.display="block";
+    celebrateImg.classList.add("show");
+  },200);
+
   setTimeout(()=>{
     buttons.style.opacity=1;
     likeBtn.classList.add("left-in");
