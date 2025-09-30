@@ -5,14 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>生日驚喜 — 第 2 頁</title>
 
-<!-- 字型 -->
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
   --fg: #4b0082;
-  --bgA: #a1c4fd;   /* 柔和的淺藍 */
-  --bgB: #c2e9fb;   /* 淡藍紫 */
+  --bgA: #a1c4fd;   
+  --bgB: #c2e9fb;   
   --like: #ffb86b;
   --dislike: #7fb3ff;
   --closeBtn: #a78bfa;
@@ -25,7 +24,6 @@ body {
   color:var(--fg);
 }
 
-/* 全螢幕置中文字 */
 .slide { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; background: transparent; z-index:3; }
 .msg { font-weight:700; white-space:nowrap; opacity:0; transform: scale(.5); transition: all .6s ease; }
 .msg.show { opacity:1; transform: scale(1); }
@@ -33,17 +31,14 @@ body {
 .msg.normal { font-size: clamp(28px, 6vw, 72px); }
 .msg.count { font-size: clamp(72px, 20vw, 220px); }
 
-/* 蛋糕區 */
 #cake-area { width:100%; display:flex; justify-content:center; margin-top:6vh; position:relative; z-index:2; }
 .cake-media { width:min(560px,80%); display:none; opacity:0; transition:opacity .6s ease; }
 .cake-media.show { display:block; opacity:1; }
 
-/* 祝賀文字 */
 #afterCake { display:none; text-align:center; margin-top:16px; z-index:2; }
 .celebrate { font-weight:700; font-size: clamp(32px, 6vw, 56px); white-space:nowrap; opacity:0; transform:scale(.6); transition: all .6s ease; color: var(--fg); }
 .celebrate.show { opacity:1; transform:scale(1); }
 
-/* 按鈕 */
 #buttons { margin-top:30px; display:flex; gap:24px; justify-content:center; opacity:0; }
 .btn { padding:10px 22px; border:none; border-radius:12px; font-weight:700; font-size:18px; cursor:pointer; white-space:nowrap; transform:scale(1); transition: transform .25s ease, opacity .6s; }
 .btn.like { background:var(--like); color:#3b2b1a; }
@@ -54,28 +49,22 @@ body {
 @keyframes leftIn { from{opacity:0; transform:translateX(-40px);} to{opacity:1; transform:translateX(0);} }
 @keyframes rightIn{ from{opacity:0; transform:translateX(40px);} to{opacity:1; transform:translateX(0);} }
 
-/* emoji overlay */
 #emojiOverlay { position:fixed; top:45%; left:50%; transform:translate(-50%,-50%) scale(.5); font-size:120px; opacity:0; transition: all .6s ease; z-index:5; }
 #emojiOverlay.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
 
-/* emoji 掉落 */
 .emoji-fall { position:fixed; top:-40px; font-size:28px; animation:emojiFall linear forwards; z-index:4; }
 @keyframes emojiFall { to { transform:translateY(110vh) rotate(720deg); opacity:0; } }
 
-/* 彩屑 */
 .confetti { position: fixed; top: -10px; opacity: 0.9; z-index: 6; animation: confettiFall linear forwards; }
 @keyframes confettiFall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
 
-/* modal */
 .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:10; }
 .modal.show { display:flex; }
 .modal-content { background:white; padding:32px 40px; border-radius:14px; font-weight:700; text-align:center; font-size:1.6em; position:relative; }
 .modal-content button { position:static; display:block; margin: 40px auto 0; background:var(--closeBtn); color:white; border:none; padding:14px 28px; border-radius:12px; font-weight:700; font-size:1.1em; cursor:pointer; }
 
-/* 保留區塊 */
 #future-area { display:none; }
 
-/* 煙火 canvas */
 #fireworksCanvas {
   position: fixed;
   top:0; left:0;
@@ -84,33 +73,34 @@ body {
   pointer-events:none;
 }
 
-/* dog gif + 豎排文字 */
+/* dog gif + 豎排文字置中覆蓋 */
 #dogGifContainer {
   display:none;
   position:fixed;
   inset:0;
   justify-content:center;
   align-items:center;
-  flex-direction:column;
   z-index:30;
   background: rgba(0,0,0,0.3);
+  transition: opacity 1s ease;
 }
-#dogGifContainer img {
-  max-width:100%;
-  max-height:100%;
-  object-fit:contain;
-}
+#dogGifContainer.fade-out { opacity:0; }
+#dogGifContainer img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
 #dogText {
-  margin-top:20px;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
   font-weight:700;
   font-size: clamp(32px, 6vw, 72px);
-  color:white;
-  writing-mode: vertical-rl;
-  text-orientation: upright;
+  color: var(--fg);
   display:flex;
   flex-direction:column;
+  align-items:center;
   gap:4px;
 }
+#dogText span { display:block; opacity:1; transition: opacity 0.6s ease; }
+
 </style>
 </head>
 <body>
@@ -138,8 +128,6 @@ body {
 
 <audio id="bgm" src="blessing.mp3" loop></audio>
 <div id="future-area"></div>
-
-<!-- 煙火 canvas -->
 <canvas id="fireworksCanvas"></canvas>
 
 <!-- dog gif + 豎排文字 -->
@@ -149,17 +137,8 @@ body {
 </div>
 
 <script>
-
 const COUNT_MESSAGES = [
-  "嘿~海綿寶寶",
-  "今天是屬於",
-  "🫵🏻🫵🏻🫵🏻你🫵🏻🫵🏻🫵🏻",
-  "特別日子！！！",
-  "準備好了嗎？🧐",
-  "就算還沒👀",
-  "也給我準備好😎",
-  "時間不等人的🥳",
-  "3","2","1"
+  "嘿～海綿寶寶","今天是屬於","🫵🏻🫵🏻🫵🏻你🫵🏻🫵🏻🫵🏻","特別日子！！！","準備好了嗎？🧐","就算還沒👀","也給我準備好😎","時間不等人的🥳","3","2","1"
 ];
 const VIDEO_SRC="Cake1.webm";
 const GIF_SRC="Cake2.gif";
@@ -180,7 +159,6 @@ const bgm=document.getElementById("bgm");
 let dislikeCount=0;
 let confettiInterval=null;
 
-// 流程：一段文字一段顯示
 function startSequence(){
   let idx=0;
   function showOne(){
@@ -205,13 +183,11 @@ function startSequence(){
   showOne();
 }
 
-// 蛋糕流程
 function showCake(){
   cakeVideo.src=VIDEO_SRC;
   cakeGif.src=GIF_SRC;
   cakeVideo.classList.add("show");
   cakeVideo.play().catch(()=>{console.log("autoplay blocked");});
-
   cakeVideo.onended=()=>{
     cakeVideo.classList.remove("show");
     setTimeout(()=>{
@@ -222,7 +198,6 @@ function showCake(){
   };
 }
 
-// 顯示文字
 function showCelebrate(){
   afterCake.style.display="block";
   setTimeout(()=>celebrateText.classList.add("show"),200);
@@ -233,34 +208,28 @@ function showCelebrate(){
   },1000);
 }
 
-// 彩屑
 function launchConfetti(){
   confettiInterval = setInterval(()=>{
     const confetti=document.createElement("div");
     confetti.className="confetti";
     document.body.appendChild(confetti);
-
     const size=Math.random()*12+8;
     confetti.style.width=`${size}px`;
     confetti.style.height=`${size}px`;
     confetti.style.left=`${Math.random()*100}vw`;
     confetti.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`;
     confetti.style.animationDuration=`${Math.random()*3+2}s`;
-
     setTimeout(()=>confetti.remove(),5000);
   },120);
 }
 
-// 不喜歡互動
 dislikeBtn.onclick=()=>{
   dislikeCount++;
   likeBtn.style.transform=`scale(${1+dislikeCount*0.2})`;
-
   if(dislikeCount===1){
     emojiOverlay.textContent="🥺";
     emojiOverlay.classList.add("show");
     setTimeout(()=>emojiOverlay.classList.remove("show"),1500);
-
   }else if(dislikeCount===2){
     for(let i=0;i<30;i++){
       const e=document.createElement("div");
@@ -272,7 +241,6 @@ dislikeBtn.onclick=()=>{
       document.body.appendChild(e);
       setTimeout(()=>e.remove(),5000);
     }
-
   }else if(dislikeCount>=3){
     let text="";
     if(dislikeCount===3) text="你忍心嗎？🥺";
@@ -286,7 +254,6 @@ dislikeBtn.onclick=()=>{
 };
 modalClose.onclick=()=>{modal.classList.remove("show");};
 
-// ===== 喜歡 → 煙火 =====
 likeBtn.onclick = () => {
   clearInterval(confettiInterval);
   document.querySelectorAll(".confetti").forEach(c => c.remove());
@@ -295,7 +262,6 @@ likeBtn.onclick = () => {
 
   startFireworks();
 
-  // 煙火後顯示 GIF + 豎排文字
   setTimeout(() => {
     const dogContainer = document.getElementById("dogGifContainer");
     const dogTextDiv = document.getElementById("dogText");
@@ -304,6 +270,7 @@ likeBtn.onclick = () => {
     const message = "生日快樂哦";
     dogTextDiv.innerHTML = "";
     let idx = 0;
+
     function showNextChar() {
       if(idx >= message.length) return;
       const span = document.createElement("span");
@@ -313,10 +280,20 @@ likeBtn.onclick = () => {
       setTimeout(showNextChar, 300);
     }
     showNextChar();
+
+    // 2 秒後淡出 GIF
+    setTimeout(() => {
+      dogContainer.classList.add("fade-out");
+      setTimeout(() => {
+        const spans = dogTextDiv.querySelectorAll("span");
+        spans.forEach((span, i) => {
+          setTimeout(()=>{ span.style.opacity = 0; }, i*300);
+        });
+      }, 1000); // GIF fade-out 時間 1s
+    }, 2000);
   }, 1000);
 };
 
-// 煙火效果
 function startFireworks() {
   const canvas = document.getElementById("fireworksCanvas");
   const ctx = canvas.getContext("2d");
@@ -352,7 +329,6 @@ function startFireworks() {
   loop();
 }
 
-// 啟動舊流程
 window.onload=()=>{
   try{bgm.play().catch(()=>{});}catch(e){}
   startSequence();
