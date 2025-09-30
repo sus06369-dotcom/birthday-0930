@@ -89,7 +89,7 @@ body {
   left:50%;
   transform:translate(-50%,-50%);
   font-weight:700;
-  font-size: clamp(48px, 10vw, 120px); /* 文字變大 */
+  font-size: clamp(60px, 12vw, 140px); /* 文字更大 */
   color: var(--fg);
   display:flex;
   flex-direction:column;
@@ -135,7 +135,7 @@ body {
 
 <script>
 
-const COUNT_MESSAGES = ["嘿～海綿寶寶","今天是屬於","🫵🏻🫵🏻🫵🏻你🫵🏻🫵🏻🫵🏻","特別日子！！！","準備好了嗎？🧐","就算還沒👀","也給我準備好😎","時間不等人的🥳","3","2","1"];
+const COUNT_MESSAGES = ["嘿~海綿寶寶","今天是屬於","🫵🏻🫵🏻🫵🏻你🫵🏻🫵🏻🫵🏻","特別日子！！！","準備好了嗎？🧐","就算還沒👀","也給我準備好😎","時間不等人的🥳","3","2","1"];
 const VIDEO_SRC="Cake1.webm";
 const GIF_SRC="Cake2.gif";
 
@@ -262,9 +262,9 @@ likeBtn.onclick = () => {
   setTimeout(() => {
     const dogContainer = document.getElementById("dogGifContainer");
     const dogTextDiv = document.getElementById("dogText");
-    dogContainer.style.display = "flex";
+    dogContainer.style.display = "flex"; // 顯示 GIF
 
-    // 2 秒後顯示文字
+    // GIF 顯示 2 秒後開始逐字顯示文字
     setTimeout(() => {
       const message = "生日快樂哦";
       dogTextDiv.innerHTML = "";
