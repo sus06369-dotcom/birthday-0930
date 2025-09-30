@@ -38,18 +38,10 @@ body {
 .cake-media { width:min(560px,80%); display:none; opacity:0; transition:opacity .6s ease; }
 .cake-media.show { display:block; opacity:1; }
 
-/* 祝賀圖片 */
+/* 祝賀文字 */
 #afterCake { display:none; text-align:center; margin-top:16px; z-index:2; }
-.celebrate {
-  font-weight:700;
-  opacity:0;
-  transform:scale(.6);
-  transition: all .6s ease;
-  max-width:90vw;
-  max-height:70vh;
-  width:auto;
-  height:auto;
-}
+.celebrate { font-weight:700; font-size: clamp(32px, 6vw, 56px); white-space:nowrap; opacity:0; transform:scale(.6); transition: all .6s ease; color: var(--fg); }
+.celebrate.show { opacity:1; transform:scale(1); }
 
 /* 按鈕 */
 #buttons { margin-top:30px; display:flex; gap:24px; justify-content:center; opacity:0; }
@@ -128,8 +120,7 @@ body {
     <img id="cakeGif" class="cake-media" alt="cake gif" />
   </div>
   <div id="afterCake">
-    <!-- 改為圖片 -->
-    <img id="celebrateImg" class="celebrate" src="happy birthday.png" alt="Happy Birthday" style="display:none;" />
+    <div id="celebrateText" class="celebrate">Happy Birthday</div>
     <div id="buttons">
       <button id="likeBtn" class="btn like">我很喜歡</button>
       <button id="dislikeBtn" class="btn dislike">我不喜歡</button>
@@ -153,14 +144,14 @@ body {
 
 <!-- dog gif + 豎排文字 -->
 <div id="dogGifContainer">
-  <img id="dogGif" src="happy dog.gif" alt="Happy Dog" />
+  <img id="dogGif" src="happy_dog.gif" alt="Happy Dog" />
   <div id="dogText"></div>
 </div>
 
 <script>
 
 const COUNT_MESSAGES = [
-  "嘿～海綿寶寶",
+  "嘿~海綿寶寶",
   "今天是屬於",
   "🫵🏻🫵🏻🫵🏻你🫵🏻🫵🏻🫵🏻",
   "特別日子！！！",
@@ -176,7 +167,7 @@ const GIF_SRC="Cake2.gif";
 const cakeVideo=document.getElementById("cakeVideo");
 const cakeGif=document.getElementById("cakeGif");
 const afterCake=document.getElementById("afterCake");
-const celebrateImg=document.getElementById("celebrateImg");
+const celebrateText=document.getElementById("celebrateText");
 const buttons=document.getElementById("buttons");
 const likeBtn=document.getElementById("likeBtn");
 const dislikeBtn=document.getElementById("dislikeBtn");
@@ -231,14 +222,10 @@ function showCake(){
   };
 }
 
-// 顯示圖片代替文字
+// 顯示文字
 function showCelebrate(){
   afterCake.style.display="block";
-  setTimeout(()=>{
-    celebrateImg.style.display="block";
-    celebrateImg.classList.add("show");
-  },200);
-
+  setTimeout(()=>celebrateText.classList.add("show"),200);
   setTimeout(()=>{
     buttons.style.opacity=1;
     likeBtn.classList.add("left-in");
@@ -301,38 +288,32 @@ modalClose.onclick=()=>{modal.classList.remove("show");};
 
 // ===== 喜歡 → 煙火 =====
 likeBtn.onclick = () => {
-  // 停止彩屑
   clearInterval(confettiInterval);
   document.querySelectorAll(".confetti").forEach(c => c.remove());
-
-  // 清除蛋糕、祝賀文字與按鈕
   document.getElementById("cake-area").innerHTML = "";
   afterCake.style.display = "none";
 
-  // 啟動煙火
   startFireworks();
 
-  // 煙火後顯示 GIF 和逐字文字
+  // 煙火後顯示 GIF + 豎排文字
   setTimeout(() => {
     const dogContainer = document.getElementById("dogGifContainer");
     const dogTextDiv = document.getElementById("dogText");
     dogContainer.style.display = "flex";
 
     const message = "生日快樂哦";
-    dogTextDiv.innerHTML = ""; // 清空
+    dogTextDiv.innerHTML = "";
     let idx = 0;
-
     function showNextChar() {
       if(idx >= message.length) return;
       const span = document.createElement("span");
       span.textContent = message[idx];
       dogTextDiv.appendChild(span);
       idx++;
-      setTimeout(showNextChar, 300); // 每個字出現間隔 0.3 秒
+      setTimeout(showNextChar, 300);
     }
-
     showNextChar();
-  }, 1000); // 煙火出現 1 秒後
+  }, 1000);
 };
 
 // 煙火效果
@@ -340,16 +321,11 @@ function startFireworks() {
   const canvas = document.getElementById("fireworksCanvas");
   const ctx = canvas.getContext("2d");
   let particles = [];
-
-  function resize(){
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-  }
+  function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
   window.addEventListener("resize",resize);
   resize();
 
   function random(min,max){return Math.random()*(max-min)+min;}
-
   function createFirework(){
     const x=random(0,canvas.width);
     const y=random(0,canvas.height/2);
@@ -357,41 +333,22 @@ function startFireworks() {
     for(let i=0;i<count;i++){
       const angle=Math.random()*2*Math.PI;
       const speed=random(2,6);
-      particles.push({
-        x,y,
-        vx:Math.cos(angle)*speed,
-        vy:Math.sin(angle)*speed,
-        alpha:1,
-        radius:random(2,4),
-        color:`hsl(${Math.floor(Math.random()*360)},100%,60%)`
-      });
+      particles.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,alpha:1,radius:random(2,4),color:`hsl(${Math.floor(Math.random()*360)},100%,60%)`});
     }
   }
 
   function update(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     particles.forEach((p,i)=>{
-      p.x+=p.vx;
-      p.y+=p.vy;
-      p.vy+=0.05;
-      p.alpha-=0.01;
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.alpha-=0.01;
       if(p.alpha<=0) particles.splice(i,1);
-      else{
-        ctx.globalAlpha=p.alpha;
-        ctx.fillStyle=p.color;
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.radius,0,2*Math.PI);
-        ctx.fill();
-      }
+      else { ctx.globalAlpha=p.alpha; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,2*Math.PI); ctx.fill(); }
     });
     ctx.globalAlpha=1;
   }
 
   setInterval(createFirework,800);
-  function loop(){
-    update();
-    requestAnimationFrame(loop);
-  }
+  function loop(){ update(); requestAnimationFrame(loop); }
   loop();
 }
 
